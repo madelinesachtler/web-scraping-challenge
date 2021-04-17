@@ -113,8 +113,8 @@ def scrape_info():
 
     url = 'https://space-facts.com/mars/'
     df = pd.read_html(url)[0]
-    df = df.rename(columns ={0:" ", 1: " "})
-    df
+    df = df.rename(columns ={0:" Description", 1: "Mars "})
+    df = df.to_html(classes= "table table-striped")
 
 
     # In[146]:
@@ -164,6 +164,15 @@ def scrape_info():
 
     # In[ ]:
 
+    mongo_data = { 
+        "news_title" : news_title, 
+        "news_paragraph": news_teaser, 
+        "featured_image" : featured_image_url, 
+        "mars_facts" : df, 
+        "hemispheres" : hemisphere_image_urls
 
+    }
+
+    return mongo_data
 
 

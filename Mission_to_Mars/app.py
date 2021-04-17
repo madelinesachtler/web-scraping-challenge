@@ -7,7 +7,8 @@ import time
 app = Flask(__name__)
 
 # Use PyMongo to establish Mongo connection
-mongo = PyMongo(app, uri="mongodb://localhost:27017/mars")
+app.config["MONGO_URI"] = "mongodb://localhost:27017/mars"
+mongo = PyMongo(app)
 
 
 # Route to render index.html template using data from Mongo
@@ -15,10 +16,10 @@ mongo = PyMongo(app, uri="mongodb://localhost:27017/mars")
 def home():
     ### --- NEED THIS TO IMPORT INTO HTML --- ## 
     
-    #mars = mongo.db.mars.find_one()
-
+    mars = mongo.db.mars.find_one()
+    print(mars)
     # Return template and data
-    return render_template("index.html")
+    return render_template("index.html", mars=mars)
 
 
 # Route that will trigger the scrape function
@@ -26,10 +27,11 @@ def home():
 def scrape():
 
     # Run the scrape function
+    mars = mongo.db.mars
     mars_data = scrape_mars2.scrape_info()
 
     # Update the Mongo database using update and upsert=True
-    mongo.db.collection.update({}, mars_data, upsert=True)
+    mars.update({}, mars_data, upsert=True)
 
     # Redirect back to home page
     return redirect("/")
